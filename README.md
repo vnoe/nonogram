@@ -1,4 +1,4 @@
-For this project we want to program nonogram riddles [Wikipedia](https://en.wikipedia.org/wiki/Nonogram) in elm.
+For this project we want to program [nonogram riddles](https://en.wikipedia.org/wiki/Nonogram) in elm.
 The tutorial is half-done and will be finished soon.
 To finish this project we formulated 5 optional and 3 non-optional goals.
 
