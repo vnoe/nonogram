@@ -2,12 +2,14 @@ For this project we want to program nonogram riddles (https://en.wikipedia.org/w
 The tutorial is half-done and will be finished soon.
 To finish this project we formulated 5 optional and 3 non-optional goals.
 
-Non-optional goals:
-1. Writing a nonogram solver in elm
+## Non-optional goals:
+
+1.  Writing a nonogram solver in elm
 2. Constructing an interactive surface for the game
 3. Creating a database with nonogram riddles
 
-Optional goals:
+## Optional goals:
+
 1. Programming a timer and a pause function
 2. Writing an interactive tutorial
 3. Colored numbers for the rows and columns where are still fields which can be solved
