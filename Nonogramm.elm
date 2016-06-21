@@ -14,6 +14,7 @@ import Json.Decode exposing (Decoder, (:=))
 import Matrix exposing (Matrix, matrix)
 import Random
 
+
 type Msg
     = Start
     | Tutorial
@@ -30,8 +31,10 @@ type alias Model =
     , tutorial : Bool
     , tutorialScreenNumber : Int
     , pause : Bool
-    , field: Matrix (Maybe Bool)
+    , field : Matrix (Maybe Bool)
     }
+
+
 
 --type alias Field =
 --    { size: (Int, Int)
@@ -69,14 +72,23 @@ view { start, tutorial, tutorialScreenNumber, pause, field } =
     else
         startscreen field
 
-grid2table grid = table [] (List.map (\cols -> tr [] (List.map (square2html 1 2) cols)) (Matrix.toList grid))
 
-square2html x y square = td [] [    
-    case square of
-        Nothing -> button [ onClick (Click x y) ] [ Html.text "a" ]
-        Just True -> Html.text "b"
-        Just False -> Html.text "c"
-    ]
+grid2table grid =
+    table [] (List.map (\cols -> tr [] (List.map (square2html 1 2) cols)) (Matrix.toList grid))
+
+
+square2html x y square =
+    td []
+        [ case square of
+            Nothing ->
+                button [ onClick (Click x y) ] [ Html.text "a" ]
+
+            Just True ->
+                Html.text "b"
+
+            Just False ->
+                Html.text "c"
+        ]
 
 
 startscreen field =
@@ -98,7 +110,7 @@ tutorialscreen =
         [ h1 [] [ Html.text "Tutorial" ]
         , Html.text "A nonogram is a picture logic puzzle in which cells in a grid must be colored according to numbers at the side of the grid (see figure)."
         , br [] []
---        , Html.text "left blank according to numbers at the side of the grid (see figure)."
+          --        , Html.text "left blank according to numbers at the side of the grid (see figure)."
         , br [] []
         , Html.text "These numbers refer to the amount of adjacent squares in the row or column which have to be colored."
         , br [] []
@@ -113,6 +125,7 @@ tutorialscreen =
         , button [ onClick Next ] [ Html.text "Next" ]
         , button [ onClick Return ] [ Html.text "Return" ]
         ]
+
 
 tutorialscreen1 =
     div []
@@ -170,6 +183,7 @@ tutorialscreen1 =
         , button [ onClick Back ] [ Html.text "Back" ]
         ]
 
+
 tutorialscreen2 =
     div []
         [ h1 [] [ Html.text "Tutorial part 2" ]
@@ -184,7 +198,8 @@ pausescreen =
         [ button [ onClick Pause ] [ Html.text "Continue" ]
         ]
 
-update msg ({ start, tutorial, tutorialScreenNumber, pause, field} as model) =
+
+update msg ({ start, tutorial, tutorialScreenNumber, pause, field } as model) =
     case msg of
         Start ->
             ( { model | start = True }, Cmd.none )
@@ -208,7 +223,7 @@ update msg ({ start, tutorial, tutorialScreenNumber, pause, field} as model) =
             ( { model | pause = pause }, Cmd.none )
 
         Click x y ->
-            ( { model | field = field}, Cmd.none)
+            ( { model | field = field }, Cmd.none )
 
 
 subscriptions _ =
