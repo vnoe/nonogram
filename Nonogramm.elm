@@ -13,7 +13,6 @@ import Mouse exposing (Position)
 import Json.Decode exposing (Decoder, (:=))
 import Random
 
-
 type Msg
     = Start
     | Tutorial
@@ -60,7 +59,6 @@ view { start, tutorial, tutorialScreenNumber, pause } =
     else
         startscreen
 
-
 startscreen =
     div []
         [ button [ onClick Start ] [ Html.text "Start" ]
@@ -82,13 +80,12 @@ tutorialscreen =
         , Html.text "In a short upcoming tutorial the strategies to solve such puzzles will be explained."
         , br [] []
         , br [] []
-        , Html.img [ src "Nonogram2.jpg" ] []
+        , Html.img [ src "Bilder/Nonogram2.jpg" ] []
         , br [] []
         , br [] []
         , button [ onClick Next ] [ Html.text "Next" ]
         , button [ onClick Return ] [ Html.text "Return" ]
         ]
-
 
 tutorialscreen1 =
     div []
@@ -97,7 +94,7 @@ tutorialscreen1 =
         , br [] []
         , Html.text "In this tutorial we will solve the following 10x10 nonogram."
         , br [] []
-        , Html.img [ src "Nonogram_tutorial_1.jpg" ] []
+        , Html.img [ src "Bilder/Nonogram_tutorial_1.jpg" ] []
         , br [] []
         , br [] []
         , Html.text "First we look for rows or columns where the number is 0 or the size of the puzzle."
@@ -106,7 +103,7 @@ tutorialscreen1 =
         , br [] []
         , Html.text "or have to stay completly blank. We have two such rows in this puzzle."
         , br [] []
-        , Html.img [ src "Nonogram_tutorial_2.jpg" ] []
+        , Html.img [ src "Bilder/Nonogram_tutorial_2.jpg" ] []
         , br [] []
         , br [] []
         , Html.text "In the next step we look for rows and columns where the numbers of the colored squares and minimum blank squares"
@@ -123,7 +120,7 @@ tutorialscreen1 =
         , br [] []
         , Html.text "there are 3 seperated filled fields and therefore at least two empty field are needed."
         , br [] []
-        , Html.img [ src "Nonogram_tutorial_3.jpg" ] []
+        , Html.img [ src "Bilder/Nonogram_tutorial_3.jpg" ] []
         , br [] []
         , Html.text "The first row is already solved because two single squares are already filled, so every other"
         , br [] []
@@ -131,7 +128,7 @@ tutorialscreen1 =
         , br [] []
         , Html.text "to remind us we already checked them."
         , br [] []
-        , Html.img [ src "Nonogram_tutorial_4.jpg" ] []
+        , Html.img [ src "Bilder/Nonogram_tutorial_4.jpg" ] []
         , br [] []
         , Html.text "We have a similar situations for the three 2 2 rows. Here we cannot mark all squares with X but"
         , br [] []
@@ -146,11 +143,10 @@ tutorialscreen1 =
         , button [ onClick Back ] [ Html.text "Back" ]
         ]
 
-
 tutorialscreen2 =
     div []
         [ h1 [] [ Html.text "Tutorial part 2" ]
-        , Html.text "After marking the" 
+        , Html.text "After marking the"
         , button [ onClick Next ] [ Html.text "Next" ]
         , button [ onClick Back ] [ Html.text "Back" ]
         ]
