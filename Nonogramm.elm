@@ -11,6 +11,7 @@ import Color exposing (..)
 import Time exposing (Time, second)
 import Mouse exposing (Position)
 import Json.Decode exposing (Decoder, (:=))
+import Matrix exposing (Matrix, matrix)
 import Random
 
 type Msg
@@ -21,6 +22,7 @@ type Msg
     | Pause
     | Back
     | Tick Time
+    | Click Int Int
 
 
 type alias Model =
@@ -28,11 +30,19 @@ type alias Model =
     , tutorial : Bool
     , tutorialScreenNumber : Int
     , pause : Bool
+    , field: Matrix (Maybe Bool)
     }
+
+--type alias Field =
+--    { size: (Int, Int)
+--    , rows: Matrix Int
+--    , cols: Matrix Int
+--    , grid: Matrix (Maybe Bool)
+--    }
 
 
 init =
-    ( { start = False, tutorial = False, tutorialScreenNumber = 0, pause = False }, Cmd.none )
+    ( { field = matrix 10 10 (\_ -> Nothing), start = False, tutorial = False, tutorialScreenNumber = 0, pause = False }, Cmd.none )
 
 
 main =
@@ -45,7 +55,7 @@ main =
 
 
 view : Model -> Html Msg
-view { start, tutorial, tutorialScreenNumber, pause } =
+view { start, tutorial, tutorialScreenNumber, pause, field } =
     if start == True then
         gamescreen
     else if pause == True then
@@ -57,12 +67,29 @@ view { start, tutorial, tutorialScreenNumber, pause } =
     else if tutorial == True then
         tutorialscreen
     else
-        startscreen
+        startscreen field
 
-startscreen =
+grid2table grid = table [] (List.map (\cols -> tr [] (List.map (square2html 1 2) cols)) (Matrix.toList grid))
+
+square2html x y square = td [] [    
+    case square of
+        Nothing -> button [ onClick (Click x y) ] [ Html.text "a" ]
+        Just True -> Html.text "b"
+        Just False -> Html.text "c"
+    ]
+
+
+startscreen field =
     div []
-        [ button [ onClick Start ] [ Html.text "Start" ]
+        [ grid2table field
+        , button [ onClick Start ] [ Html.text "Start" ]
         , button [ onClick Tutorial ] [ Html.text "Tutorial" ]
+        ]
+
+
+gamescreen =
+    div []
+        [ button [ onClick Return ] [ Html.text "Return" ]
         ]
 
 
@@ -157,14 +184,7 @@ pausescreen =
         [ button [ onClick Pause ] [ Html.text "Continue" ]
         ]
 
-
-gamescreen =
-    div []
-        [ button [ onClick Return ] [ Html.text "Return" ]
-        ]
-
-
-update msg ({ start, tutorial, tutorialScreenNumber, pause } as model) =
+update msg ({ start, tutorial, tutorialScreenNumber, pause, field} as model) =
     case msg of
         Start ->
             ( { model | start = True }, Cmd.none )
@@ -186,6 +206,9 @@ update msg ({ start, tutorial, tutorialScreenNumber, pause } as model) =
 
         Tick _ ->
             ( { model | pause = pause }, Cmd.none )
+
+        Click x y ->
+            ( { model | field = field}, Cmd.none)
 
 
 subscriptions _ =
