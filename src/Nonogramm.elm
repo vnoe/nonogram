@@ -24,6 +24,7 @@ type Msg
 type alias Model =
     { pause : Bool
     , field : Matrix (Maybe Bool)
+    , lastClicked : (Int, Int)
     }
 
 
@@ -37,7 +38,7 @@ type alias Model =
 
 
 init =
-    ( { field = matrix 10 10 (\_ -> Nothing), pause = False }, Cmd.none )
+    ( { field = matrix 10 10 (\_ -> Nothing), pause = False, lastClicked = (0, 0) }, Cmd.none )
 
 
 main =
@@ -50,15 +51,15 @@ main =
 
 
 view : Model -> Html Msg
-view { pause, field } =
+view { pause, field, lastClicked } =
     if pause then
         pausescreen
     else
-        gamescreen field
+        gamescreen field lastClicked
 
 
 grid2table grid =
-    table [] (List.map (\cols -> tr [] (List.map (square2html 1 2) cols)) (Matrix.toList grid))
+    table [] (List.indexedMap (\x cols -> tr [] (List.indexedMap (square2html x) cols)) (Matrix.toList grid))
 
 
 square2html x y square =
@@ -75,10 +76,10 @@ square2html x y square =
         ]
 
 
-gamescreen field =
+gamescreen field lastClicked =
     div []
         [ grid2table field
-        , Html.text "pause"]
+        , Html.text (toString lastClicked)]
 
 pausescreen =
     div []
@@ -95,7 +96,7 @@ update msg ({ pause, field } as model) =
             ( { model | pause = pause }, Cmd.none )
 
         Click x y ->
-            ( { model | field = field }, Cmd.none )
+            ( { model | lastClicked = (x, y) }, Cmd.none )
 
 
 subscriptions _ =
