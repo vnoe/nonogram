@@ -24,7 +24,7 @@ type Msg
 type alias Model =
     { pause : Bool
     , field : Matrix (Maybe Bool)
-    , lastClicked : (Int, Int)
+    , lastClicked : ( Int, Int )
     }
 
 
@@ -38,7 +38,7 @@ type alias Model =
 
 
 init =
-    ( { field = matrix 10 10 (\_ -> Nothing), pause = False, lastClicked = (0, 0) }, Cmd.none )
+    ( { field = matrix 10 10 (\_ -> Nothing), pause = False, lastClicked = ( 0, 0 ) }, Cmd.none )
 
 
 main =
@@ -66,7 +66,7 @@ square2html x y square =
     td []
         [ case square of
             Nothing ->
-                button [ onClick (Click x y) ] [ Html.text "a" ]
+                button [ onClick (Click x y) ] [ Html.text ((toString x) ++ " " ++ (toString y)) ]
 
             Just True ->
                 Html.text "b"
@@ -79,11 +79,13 @@ square2html x y square =
 gamescreen field lastClicked =
     div []
         [ grid2table field
-        , Html.text (toString lastClicked)]
+        , Html.text (toString lastClicked)
+        ]
+
 
 pausescreen =
     div []
-        [ button [ onClick Pause ]  [ Html.text "pause" ]
+        [ button [ onClick Pause ] [ Html.text "pause" ]
         ]
 
 
@@ -96,7 +98,7 @@ update msg ({ pause, field } as model) =
             ( { model | pause = pause }, Cmd.none )
 
         Click x y ->
-            ( { model | lastClicked = (x, y) }, Cmd.none )
+            ( { model | lastClicked = ( x, y ) }, Cmd.none )
 
 
 subscriptions _ =
