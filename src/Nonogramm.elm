@@ -18,8 +18,7 @@ import Random
 type Msg
     = Pause
     | Tick Time
-    | Click Int Int
-
+    | Change Int Int
 
 type alias Model =
     { pause : Bool
@@ -27,14 +26,20 @@ type alias Model =
     , lastClicked : ( Int, Int )
     }
 
+linestyle = 
+    { color = black
+    , width = 3.0
+    , cap = Flat
+    , join = Smooth
+    , dashing = []
+    , dashOffset = 0
+   }
 
+trtdstyle =
+   Html.Attributes.style [("border", "2px solid black"), ("padding", "0px")]
 
---type alias Field =
---    { size: (Int, Int)
---    , rows: Matrix Int
---    , cols: Matrix Int
---    , grid: Matrix (Maybe Bool)
---    }
+tablestyle =
+   Html.Attributes.style [("border-spacing", "0px"), ("border", "2px solid black")]
 
 
 init =
@@ -59,27 +64,26 @@ view { pause, field, lastClicked } =
 
 
 grid2table grid =
-    table [] (List.indexedMap (\x cols -> tr [] (List.indexedMap (square2html x) cols)) (Matrix.toList grid))
+    table [tablestyle] (List.indexedMap (\x cols -> tr [trtdstyle] (List.indexedMap (square2html x) cols)) (Matrix.toList grid))
 
 
 square2html x y square =
-    td []
+    td [trtdstyle]
         [ case square of
             Nothing ->
-                button [ onClick (Click x y) ] [ Html.text ((toString x) ++ " " ++ (toString y)) ]
+                div [onClick (Change x y)] [ Element.toHtml <| collage 30 30 [filled white (rect 30 30)] ]
 
             Just True ->
-                Html.text "b"
+                div [onClick (Change x y)] [ Element.toHtml <| collage 30 30 [filled black (rect 30 30)] ]
 
             Just False ->
-                Html.text "c"
+                div [onClick (Change x y)] [ Element.toHtml <| collage 30 30 [traced linestyle (path [(-30,-30), (30,30)]), traced linestyle (path [(-30,30), (30,-30)])] ]
         ]
 
 
 gamescreen field lastClicked =
     div []
         [ grid2table field
-        , Html.text (toString lastClicked)
         ]
 
 
@@ -97,8 +101,13 @@ update msg ({ pause, field } as model) =
         Tick _ ->
             ( { model | pause = pause }, Cmd.none )
 
-        Click x y ->
-            ( { model | lastClicked = ( x, y ) }, Cmd.none )
+        Change x y ->
+            ( case Matrix.get (Matrix.loc x y) field of
+                   Just Nothing -> { model | field = Matrix.set (Matrix.loc x y) (Just True) field}
+                   Just (Just True) -> { model | field = Matrix.set (Matrix.loc x y) (Just False) field}
+                   Just (Just False) -> { model | field = Matrix.set (Matrix.loc x y) (Nothing) field}
+                   Nothing -> { model | field = field }
+              , Cmd.none)
 
 
 subscriptions _ =
