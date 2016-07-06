@@ -20,30 +20,47 @@ type Msg
     | Tick Time
     | Change Int Int
 
+
 type alias Model =
     { pause : Bool
     , field : Matrix (Maybe Bool)
     , lastClicked : ( Int, Int )
+    , row_hints : List (List Int)
+    , col_hints : List (List Int)
     }
 
-linestyle = 
+
+linestyle =
     { color = black
     , width = 3.0
     , cap = Flat
     , join = Smooth
     , dashing = []
     , dashOffset = 0
-   }
+    }
+
 
 trtdstyle =
-   Html.Attributes.style [("border", "2px solid black"), ("padding", "0px")]
+    Html.Attributes.style [ ( "border", "2px solid black" ), ( "padding", "0px" ) ]
+
+
+
+--, ("font-family", "sans-serf"), ("font-style", "bold")
+
 
 tablestyle =
-   Html.Attributes.style [("border-spacing", "0px"), ("border", "2px solid black")]
+    Html.Attributes.style [ ( "border-spacing", "0px" ), ( "border", "2px solid black" ) ]
 
 
 init =
-    ( { field = matrix 10 10 (\_ -> Nothing), pause = False, lastClicked = ( 0, 0 ) }, Cmd.none )
+    ( { field = matrix 10 10 (\_ -> Nothing)
+      , pause = False
+      , lastClicked = ( 0, 0 )
+      , row_hints = [ [ 1 ], [ 1 ], [ 2, 1 ], [ 1 ], [ 1 ], [ 2, 2 ], [], [ 2, 6 ], [ 1 ], [ 1 ] ]
+      , col_hints = [ [ 1 ], [ 2 ], [ 1 ], [ 4, 3 ], [ 1 ], [ 1 ], [ 1 ], [ 4 ], [ 3, 5, 3, 4, 1 ], [ 1 ] ]
+      }
+    , Cmd.none
+    )
 
 
 main =
@@ -56,34 +73,78 @@ main =
 
 
 view : Model -> Html Msg
-view { pause, field, lastClicked } =
+view { pause, field, row_hints, col_hints, lastClicked } =
     if pause then
         pausescreen
     else
-        gamescreen field lastClicked
+        gamescreen field row_hints col_hints lastClicked
 
 
-grid2table grid =
-    table [tablestyle] (List.indexedMap (\x cols -> tr [trtdstyle] (List.indexedMap (square2html x) cols)) (Matrix.toList grid))
+
+calc_row_hings field = List.map (\r -> )
+
+--calc_col_hints field = 
+
+
+--has_won field row_hints col_hints = 
+
+
+
+
+
+col_hint_style =
+    Html.Attributes.style [ ( "text-align", "center" ), ( "vertical-align", "bottom" ), ( "border", "2px solid black" ) ]
+
+
+row_hint_style =
+    Html.Attributes.style [ ( "text-align", "right" ), ( "border", "2px solid black" ) ]
+
+
+col_hints_vis col_hints =
+    [ tr []
+        (List.map
+            (\hint ->
+                td [ col_hint_style ]
+                    (List.map (\n -> div [] [ Html.text (toString n) ]) hint)
+            )
+            col_hints
+        )
+    ]
+
+
+row_hints_vis hint =
+    td [ row_hint_style ]
+        (List.map (\n -> span [] [ Html.text (" " ++ (toString n)) ]) hint)
+
+
+nth n xs =
+    Maybe.withDefault [] (List.head (List.drop n xs))
+
+
+grid2table grid col_hints row_hints =
+    table [ tablestyle ]
+        ((col_hints_vis ([] :: col_hints))
+            ++ (List.indexedMap (\x cols -> tr [ trtdstyle ] (row_hints_vis (nth x row_hints) :: (List.indexedMap (square2html x) cols))) (Matrix.toList grid))
+        )
 
 
 square2html x y square =
-    td [trtdstyle]
+    td [ trtdstyle ]
         [ case square of
             Nothing ->
-                div [onClick (Change x y)] [ Element.toHtml <| collage 30 30 [filled white (rect 30 30)] ]
+                div [ onClick (Change x y) ] [ Element.toHtml <| collage 30 30 [ filled white (rect 30 30) ] ]
 
             Just True ->
-                div [onClick (Change x y)] [ Element.toHtml <| collage 30 30 [filled black (rect 30 30)] ]
+                div [ onClick (Change x y) ] [ Element.toHtml <| collage 30 30 [ filled black (rect 30 30) ] ]
 
             Just False ->
-                div [onClick (Change x y)] [ Element.toHtml <| collage 30 30 [traced linestyle (path [(-30,-30), (30,30)]), traced linestyle (path [(-30,30), (30,-30)])] ]
+                div [ onClick (Change x y) ] [ Element.toHtml <| collage 30 30 [ traced linestyle (path [ ( -30, -30 ), ( 30, 30 ) ]), traced linestyle (path [ ( -30, 30 ), ( 30, -30 ) ]) ] ]
         ]
 
 
-gamescreen field lastClicked =
+gamescreen field col_hints row_hints lastClicked =
     div []
-        [ grid2table field
+        [ grid2table field col_hints row_hints
         ]
 
 
@@ -103,11 +164,19 @@ update msg ({ pause, field } as model) =
 
         Change x y ->
             ( case Matrix.get (Matrix.loc x y) field of
-                   Just Nothing -> { model | field = Matrix.set (Matrix.loc x y) (Just True) field}
-                   Just (Just True) -> { model | field = Matrix.set (Matrix.loc x y) (Just False) field}
-                   Just (Just False) -> { model | field = Matrix.set (Matrix.loc x y) (Nothing) field}
-                   Nothing -> { model | field = field }
-              , Cmd.none)
+                Just Nothing ->
+                    { model | field = Matrix.set (Matrix.loc x y) (Just True) field }
+
+                Just (Just True) ->
+                    { model | field = Matrix.set (Matrix.loc x y) (Just False) field }
+
+                Just (Just False) ->
+                    { model | field = Matrix.set (Matrix.loc x y) (Nothing) field }
+
+                Nothing ->
+                    { model | field = field }
+            , Cmd.none
+            )
 
 
 subscriptions _ =
