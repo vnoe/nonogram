@@ -56,8 +56,8 @@ init =
     ( { field = matrix 10 10 (\_ -> Nothing)
       , pause = False
       , lastClicked = ( 0, 0 )
-      , row_hints = [ [ 1 ], [ 1 ], [ 2, 1 ], [ 1 ], [ 1 ], [ 2, 2 ], [], [ 2, 6 ], [ 1 ], [ 1 ] ]
-      , col_hints = [ [ 1 ], [ 2 ], [ 1 ], [ 4, 3 ], [ 1 ], [ 1 ], [ 1 ], [ 4 ], [ 3, 5, 3, 4, 1 ], [ 1 ] ]
+      , row_hints = [ [ 3 ], [ 2, 1 ], [ 3, 1 ], [ 1, 2, 3 ], [ 1, 1, 1 ], [ 1, 3, 2 ], [ 2, 3, 1 ], [ 4, 1, 1 ], [ 7 ], [ 7 ] ]
+      , col_hints = [ [ 5 ], [ 2, 4 ], [ 1, 3 ], [ 3, 5 ], [ 7, 2 ], [ 1, 5 ], [ 1, 2 ], [ 1, 1, 1, 1 ], [ 5 ], [ 1 ] ]
       }
     , Cmd.none
     )
@@ -81,7 +81,7 @@ view { pause, field, row_hints, col_hints, lastClicked } =
 
 
 
-calc_row_hings field = List.map (\r -> )
+--calc_row_hings field = List.map (\r -> )
 
 --calc_col_hints field = 
 
