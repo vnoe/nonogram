@@ -87,7 +87,9 @@ square2html x y square =
 gamescreen riddleNum field lastClicked rowHints colHints =
     div []
         [ grid2table field colHints rowHints,
+          if riddleNum < List.length rowHintDatabase then
           button [ onClick Next ] [ Html.text "Next" ]
+          else button [] [ Html.text "Next" ]
         ]
 
 
