@@ -1,5 +1,9 @@
 module Main exposing (..)
 
+import Database exposing (..)
+import Style exposing (..)
+import Functions exposing (..)
+
 import Html exposing (..)
 import Html.Events exposing (..)
 import Html.App exposing (program)
@@ -14,50 +18,29 @@ import Json.Decode exposing (Decoder, (:=))
 import Matrix exposing (Matrix, matrix)
 import Random
 
-
 type Msg
     = Pause
+    | Next
     | Tick Time
     | Change Int Int
 
 
 type alias Model =
     { pause : Bool
+    , riddleNum : Int
     , field : Matrix (Maybe Bool)
     , lastClicked : ( Int, Int )
-    , row_hints : List (List Int)
-    , col_hints : List (List Int)
+    , rowHints : List (List Int)
+    , colHints : List (List Int)
     }
-
-
-linestyle =
-    { color = black
-    , width = 3.0
-    , cap = Flat
-    , join = Smooth
-    , dashing = []
-    , dashOffset = 0
-    }
-
-
-trtdstyle =
-    Html.Attributes.style [ ( "border", "2px solid black" ), ( "padding", "0px" ) ]
-
-
-
---, ("font-family", "sans-serf"), ("font-style", "bold")
-
-
-tablestyle =
-    Html.Attributes.style [ ( "border-spacing", "0px" ), ( "border", "2px solid black" ) ]
-
 
 init =
-    ( { field = matrix 10 10 (\_ -> Nothing)
+    ( { riddleNum = 1
+      , field = matrix (List.length (get 0 rowHintDatabase)) (List.length (get 0 colHintDatabase)) (\_ -> Nothing)
       , pause = False
       , lastClicked = ( 0, 0 )
-      , row_hints = [ [ 3 ], [ 2, 1 ], [ 3, 1 ], [ 1, 2, 3 ], [ 1, 1, 1 ], [ 1, 3, 2 ], [ 2, 3, 1 ], [ 4, 1, 1 ], [ 7 ], [ 7 ] ]
-      , col_hints = [ [ 5 ], [ 2, 4 ], [ 1, 3 ], [ 3, 5 ], [ 7, 2 ], [ 1, 5 ], [ 1, 2 ], [ 1, 1, 1, 1 ], [ 5 ], [ 1 ] ]
+      , rowHints = get 0 rowHintDatabase
+      , colHints = get 0 colHintDatabase
       }
     , Cmd.none
     )
@@ -73,58 +56,17 @@ main =
 
 
 view : Model -> Html Msg
-view { pause, field, row_hints, col_hints, lastClicked } =
+view { riddleNum, field, pause, lastClicked, rowHints, colHints } =
     if pause then
         pausescreen
     else
-        gamescreen field row_hints col_hints lastClicked
+        gamescreen riddleNum field lastClicked rowHints colHints
 
 
-
---calc_row_hings field = List.map (\r -> )
-
---calc_col_hints field = 
-
-
---has_won field row_hints col_hints = 
-
-
-
-
-
-col_hint_style =
-    Html.Attributes.style [ ( "text-align", "center" ), ( "vertical-align", "bottom" ), ( "border", "2px solid black" ) ]
-
-
-row_hint_style =
-    Html.Attributes.style [ ( "text-align", "right" ), ( "border", "2px solid black" ) ]
-
-
-col_hints_vis col_hints =
-    [ tr []
-        (List.map
-            (\hint ->
-                td [ col_hint_style ]
-                    (List.map (\n -> div [] [ Html.text (toString n) ]) hint)
-            )
-            col_hints
-        )
-    ]
-
-
-row_hints_vis hint =
-    td [ row_hint_style ]
-        (List.map (\n -> span [] [ Html.text (" " ++ (toString n)) ]) hint)
-
-
-nth n xs =
-    Maybe.withDefault [] (List.head (List.drop n xs))
-
-
-grid2table grid col_hints row_hints =
+grid2table grid colHints rowHints =
     table [ tablestyle ]
-        ((col_hints_vis ([] :: col_hints))
-            ++ (List.indexedMap (\x cols -> tr [ trtdstyle ] (row_hints_vis (nth x row_hints) :: (List.indexedMap (square2html x) cols))) (Matrix.toList grid))
+        ((colHintsVis ([] :: colHints))
+            ++ (List.indexedMap (\x cols -> tr [ trtdstyle ] (rowHintsVis (get x rowHints) :: (List.indexedMap (square2html x) cols))) (Matrix.toList grid))
         )
 
 
@@ -135,16 +77,17 @@ square2html x y square =
                 div [ onClick (Change x y) ] [ Element.toHtml <| collage 30 30 [ filled white (rect 30 30) ] ]
 
             Just True ->
-                div [ onClick (Change x y) ] [ Element.toHtml <| collage 30 30 [ filled black (rect 30 30) ] ]
+                div [ onClick (Change x y) ] [ Element.toHtml <| collage 30 30 [ filled (rgb 90 90 90) (rect 28 28) ] ]
 
             Just False ->
-                div [ onClick (Change x y) ] [ Element.toHtml <| collage 30 30 [ traced linestyle (path [ ( -30, -30 ), ( 30, 30 ) ]), traced linestyle (path [ ( -30, 30 ), ( 30, -30 ) ]) ] ]
+                div [ onClick (Change x y) ] [ Element.toHtml <| collage 30 30 [ traced linestyle (path [ ( -13, -13 ), ( 13, 13 ) ]), traced linestyle (path [ ( -13, 13 ), ( 13, -13 ) ]) ] ]
         ]
 
 
-gamescreen field col_hints row_hints lastClicked =
+gamescreen riddleNum field lastClicked rowHints colHints =
     div []
-        [ grid2table field col_hints row_hints
+        [ grid2table field colHints rowHints,
+          button [ onClick Next ] [ Html.text "Next" ]
         ]
 
 
@@ -154,10 +97,16 @@ pausescreen =
         ]
 
 
-update msg ({ pause, field } as model) =
+update msg ({ riddleNum, field, pause, lastClicked, rowHints, colHints } as model) =
     case msg of
         Pause ->
             ( { model | pause = True }, Cmd.none )
+
+        Next ->
+            ( { model | riddleNum = riddleNum + 1,
+                        rowHints = get riddleNum rowHintDatabase,
+                        colHints = get riddleNum colHintDatabase,
+                        field = matrix (List.length (get riddleNum rowHintDatabase)) (List.length (get riddleNum colHintDatabase)) (\_ -> Nothing) }, Cmd.none )
 
         Tick _ ->
             ( { model | pause = pause }, Cmd.none )
