@@ -11184,7 +11184,7 @@ var _evancz$elm_markdown$Markdown$Options = F4(
 	function (a, b, c, d) {
 		return {githubFlavored: a, defaultHighlighting: b, sanitize: c, smartypants: d};
 	});
-var _vnoe$nonogram$Database$colHintDatabase = _elm_lang$core$Native_List.fromArray(
+var _vnoe$nonogram$Database$rowHintDatabase = _elm_lang$core$Native_List.fromArray(
 	[
 		_elm_lang$core$Native_List.fromArray(
 		[
@@ -11302,7 +11302,7 @@ var _vnoe$nonogram$Database$colHintDatabase = _elm_lang$core$Native_List.fromArr
 			[6])
 		])
 	]);
-var _vnoe$nonogram$Database$rowHintDatabase = _elm_lang$core$Native_List.fromArray(
+var _vnoe$nonogram$Database$colHintDatabase = _elm_lang$core$Native_List.fromArray(
 	[
 		_elm_lang$core$Native_List.fromArray(
 		[
@@ -11793,12 +11793,21 @@ var _vnoe$nonogram$Main$gamescreen = F5(
 			_elm_lang$core$Native_List.fromArray(
 				[
 					A3(_vnoe$nonogram$Main$grid2table, field, colHints, rowHints),
-					A2(
+					(_elm_lang$core$Native_Utils.cmp(
+					riddleNum,
+					_elm_lang$core$List$length(_vnoe$nonogram$Database$rowHintDatabase)) < 0) ? A2(
 					_elm_lang$html$Html$button,
 					_elm_lang$core$Native_List.fromArray(
 						[
 							_elm_lang$html$Html_Events$onClick(_vnoe$nonogram$Main$Next)
 						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text('Next')
+						])) : A2(
+					_elm_lang$html$Html$button,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
 					_elm_lang$core$Native_List.fromArray(
 						[
 							_elm_lang$html$Html$text('Next')
