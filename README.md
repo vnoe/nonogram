@@ -1,5 +1,5 @@
 For this project we want to program [nonogram riddles](https://en.wikipedia.org/wiki/Nonogram) in elm.
-The first runnable version can be found [here](https://github.com/vnoe/nonogram/blob/gh-pages/index.html).
+The first runnable version can be found [here](https://vnoe.github.io/nonogram/index.html).
 The tutorial is half-done, will be finished soon and then added to the runnable version.
 For now you have to use google, if you want to find out how to solve these puzzles.
 To finish this project we formulated 5 optional and 3 non-optional goals.
