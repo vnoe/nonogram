@@ -1,12 +1,14 @@
 For this project we want to program [nonogram riddles](https://en.wikipedia.org/wiki/Nonogram) in elm.
-The tutorial is half-done and will be finished soon.
+The first runnable version can be found [here](https://vnoe.github.io/nonogram/index.html).
+The tutorial is half-done, will be finished soon and then added to the runnable version.
+For now you have to use google, if you want to find out how to solve these puzzles.
 To finish this project we formulated 5 optional and 3 non-optional goals.
 
 ## Non-optional goals:
 
 1. Writing a nonogram solver in elm
 2. Constructing an interactive surface for the game -> Done
-3. Creating a database with nonogram riddles -> Done, small Database with 5 riddles
+3. Creating a database with nonogram riddles        -> Small Database with 5 riddles created
 
 ## Optional goals:
 
