@@ -1,6 +1,7 @@
 module Main exposing (..)
 
 import Database exposing (..)
+import Tutorial exposing (..)
 import Style exposing (..)
 import Functions exposing (..)
 
@@ -19,7 +20,10 @@ import Matrix exposing (Matrix, matrix)
 import Random
 
 type Msg
-    = Pause
+    = Start 
+    | Tutorial
+    | Pause
+    | Back
     | Next
     | Tick Time
     | Change Int Int
@@ -27,6 +31,8 @@ type Msg
 
 type alias Model =
     { pause : Bool
+    , start : Bool
+    , tutorial : Int
     , riddleNum : Int
     , field : Matrix (Maybe Bool)
     , lastClicked : ( Int, Int )
@@ -36,6 +42,8 @@ type alias Model =
 
 init =
     ( { riddleNum = 1
+      , start = False
+      , tutorial = -1
       , field = matrix (List.length (get 0 rowHintDatabase)) (List.length (get 0 colHintDatabase)) (\_ -> Nothing)
       , pause = False
       , lastClicked = ( 0, 0 )
@@ -56,8 +64,12 @@ main =
 
 
 view : Model -> Html Msg
-view { riddleNum, field, pause, lastClicked, rowHints, colHints } =
-    if pause then
+view { riddleNum, field, start, tutorial, pause, lastClicked, rowHints, colHints } =
+    if start == False && tutorial == -1 then
+        startscreen
+    else if tutorial /= -1 then
+        tutorialscreen tutorial
+    else if pause == True then
         pausescreen
     else
         gamescreen riddleNum field lastClicked rowHints colHints
@@ -83,6 +95,20 @@ square2html x y square =
                 div [ onClick (Change x y) ] [ Element.toHtml <| collage 30 30 [ traced linestyle (path [ ( -13, -13 ), ( 13, 13 ) ]), traced linestyle (path [ ( -13, 13 ), ( 13, -13 ) ]) ] ]
         ]
 
+startscreen =
+    div []
+        [ h1 [] [ Html.text "Nonogram Riddles" ]
+        , button [ onClick Start ] [ Html.text "Start" ]
+        , button [ onClick Tutorial ] [ Html.text "Tutorial" ]
+        ]
+
+tutorialscreen tutorial =
+    div []
+        ( [ h1 [] [ Html.text "Tutorial" ] ] 
+          ++ (get tutorial tutorialtext) 
+          ++ [ button [ onClick Back ] [ Html.text "Back to Start" ]
+             , button [ onClick Tutorial ] [ Html.text "Next" ]
+              ])
 
 gamescreen riddleNum field lastClicked rowHints colHints =
     div []
@@ -99,8 +125,14 @@ pausescreen =
         ]
 
 
-update msg ({ riddleNum, field, pause, lastClicked, rowHints, colHints } as model) =
+update msg ({ riddleNum, field, pause, tutorial, start, lastClicked, rowHints, colHints } as model) =
     case msg of
+        Start ->
+            ( { model | start = True }, Cmd.none )
+
+        Tutorial ->
+            ( { model | tutorial = tutorial + 1 }, Cmd.none )
+
         Pause ->
             ( { model | pause = True }, Cmd.none )
 
@@ -109,6 +141,10 @@ update msg ({ riddleNum, field, pause, lastClicked, rowHints, colHints } as mode
                         rowHints = get riddleNum rowHintDatabase,
                         colHints = get riddleNum colHintDatabase,
                         field = matrix (List.length (get riddleNum rowHintDatabase)) (List.length (get riddleNum colHintDatabase)) (\_ -> Nothing) }, Cmd.none )
+
+        Back ->
+            ( { model | start = False,
+                        tutorial = -1 }, Cmd.none )
 
         Tick _ ->
             ( { model | pause = pause }, Cmd.none )
