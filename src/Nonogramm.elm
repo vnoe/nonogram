@@ -4,6 +4,7 @@ import Database exposing (..)
 import Tutorial exposing (..)
 import Style exposing (..)
 import Functions exposing (..)
+import Solver exposing (..)
 
 import Html exposing (..)
 import Html.Events exposing (..)
@@ -16,7 +17,7 @@ import Color exposing (..)
 import Time exposing (Time, second)
 import Mouse exposing (Position)
 import Json.Decode exposing (Decoder, (:=))
-import Matrix exposing (Matrix, matrix)
+import Matrix exposing (Matrix, matrix, fromList)
 import Random
 
 type Msg
@@ -25,6 +26,7 @@ type Msg
     | Pause
     | Back
     | Next
+    | Solve
     | Tick Time
     | Change Int Int
 
@@ -75,6 +77,8 @@ view { riddleNum, field, start, tutorial, pause, lastClicked, rowHints, colHints
         gamescreen riddleNum field lastClicked rowHints colHints
 
 
+
+
 grid2table grid colHints rowHints =
     table [ tablestyle ]
         ((colHintsVis ([] :: colHints))
@@ -116,6 +120,7 @@ gamescreen riddleNum field lastClicked rowHints colHints =
           if riddleNum < List.length rowHintDatabase then
           button [ onClick Next ] [ Html.text "Next" ]
           else button [] [ Html.text "Next" ]
+        , button [ onClick Solve ] [ Html.text "Help" ]
         ]
 
 
@@ -141,7 +146,11 @@ update msg ({ riddleNum, field, pause, tutorial, start, lastClicked, rowHints, c
                         rowHints = get riddleNum rowHintDatabase,
                         colHints = get riddleNum colHintDatabase,
                         field = matrix (List.length (get riddleNum rowHintDatabase)) (List.length (get riddleNum colHintDatabase)) (\_ -> Nothing) }, Cmd.none )
-
+        Solve -> 
+            ( { model | field = case solveStep rowHints colHints field of
+                                    Just f -> fromList f
+                                    Nothing -> field
+                }, Cmd.none )
         Back ->
             ( { model | start = False,
                         tutorial = -1 }, Cmd.none )
