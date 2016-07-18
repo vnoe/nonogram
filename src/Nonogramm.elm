@@ -55,7 +55,6 @@ init =
     , Cmd.none
     )
 
-
 main =
     program
         { init = init
@@ -69,13 +68,14 @@ view : Model -> Html Msg
 view { riddleNum, field, start, tutorial, pause, lastClicked, rowHints, colHints } =
     if start == False && tutorial == -1 then
         startscreen
+    else if start == True then
+        gamescreen riddleNum field lastClicked rowHints colHints
     else if tutorial /= -1 then
         tutorialscreen tutorial
     else if pause == True then
         pausescreen
-    else
-        gamescreen riddleNum field lastClicked rowHints colHints
-
+    else 
+        startscreen
 
 
 
@@ -106,7 +106,14 @@ startscreen =
         , button [ onClick Tutorial ] [ Html.text "Tutorial" ]
         ]
 
-tutorialscreen tutorial =
+tutorialscreen tutorial = if tutorial == 10 then
+    div []
+        ( [ h1 [] [ Html.text "Tutorial" ] ]
+          ++ (get tutorial tutorialtext)
+          ++ [ button [ onClick Back ] [ Html.text "Back to Start" ]
+             , button [ onClick Start ] [ Html.text "Next" ]
+              ])
+    else
     div []
         ( [ h1 [] [ Html.text "Tutorial" ] ] 
           ++ (get tutorial tutorialtext) 

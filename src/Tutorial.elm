@@ -82,4 +82,61 @@ tutorialtext = [ [
         , Html.img [ src "../Bilder/Nonogram_tutorial_5.gif" ] []
         , br [] []
         , br [] []
+        ],
+        [
+        Html.text "Checking some of the empty squares in this way can be done for the second, third and fourth row."
+        , br [] []
+        , Html.text "The fifth row has to be filled with 8 adjacent squares. Since we have two single filled squares"
+        , br [] []
+        , Html.text "these can be combined with filled field. The same is true for the last row."
+        , br [] []
+        , Html.img [ src "../Bilder/Nonogram_tutorial_7.jpg" ] []
+        , br [] []
+        , br [] []
+        ], 
+        [ 
+        Html.text "Let us have a look at the 4 4 row. The first 4 adjacent filled fields can start at the first filled field."
+        , br [] []
+        , Html.text "Also these can start at the outter left field. In each case, the forth field from the left has to be colored."
+        , br [] []
+        , Html.text "The same applies for the second 4 adjacent fields. Therefore two fields can be colored in this row."
+        , br [] []
+        , Html.img [ src "../Bilder/Nonogram_tutorial_8.jpg" ] []
+        , br [] []
+        , br [] []
+        ],
+        [
+        Html.text "Since we cannot fill any more fields with the help of the row numbers, let us have a look at the column numbers."
+        , br [] []
+        , Html.text "Most easily the 9 columns can be solved. Since one field is already checke there are only 9 fields left and each"
+        , br [] []
+        , Html.text "of these has to be filled. More interestingly are the 6 columns. In these columns there are already three filled fields."
+        , br [] []
+        , Html.text "Therefore another three fields have to be colored. In upper direction there are 4 empty fields. Since only three of them"
+        , br [] []
+        , Html.text "could be filled the last one can be checked."
+        , br [] []
+        , Html.img [ src "../Bilder/Nonogram_tutorial_9.jpg" ] []
+        , br [] []
+        , br [] []
+        ],
+        [
+        Html.text "These two fields could be checked more easily since we have a 2 2 in this row and this amount of fields are already filled."
+        , br [] []
+        , Html.text "Also in the third and fourth row the remaining fields can be checked. And therefore we can fill in the 6 columns the "
+        , br [] []
+        , Html.text "remaining three fields."
+        , br [] []
+        , Html.img [ src "../Bilder/Nonogram_tutorial_10.jpg" ] []
+        , br [] []
+        , br [] []
+        ] ,
+        [
+        Html.text "The puzzle is almost solved. Just have a look at the remaining empty fields and look if these can be checked or colored."
+        , br [] []
+        , Html.text "To color a field right click on it once. To check a field perform two right clicks. To empty a field again right click three times."
+        , br [] []
+        , Html.text "Click on Next to start with the first puzzle."
+        , br [] []
+        , br [] []
         ] ]
